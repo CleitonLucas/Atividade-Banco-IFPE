@@ -1,5 +1,7 @@
 package bancario.projeto.persistencia;
 
+import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -8,23 +10,23 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import bancario.projeto.model.Cliente;
+import exception.ClienteException;
 
 public class PersistenciaEmArquivo implements Serializable{
 	private static final long serialVersionUID = 1L;
-	private ArrayList<Cliente> clientes;
+	private List<Cliente> clientes;
 	
 	public PersistenciaEmArquivo() {
-		clientes = new ArrayList<Cliente>();
+		clientes = new ArrayList<>();
 		carregarArquivo();
 	}
 	
-	public void adicionarCliente(Cliente cliente) {
+	public void adicionarCliente(Cliente cliente) throws ClienteException {
 		if(clientes.contains(cliente)) {
-			System.out.println("\n---------------------------------------------------------------------");
-			System.err.println("Cliente já existente!");
-			System.out.println("---------------------------------------------------------------------");
+			throw new ClienteException("Cliente já existente!");
 		}else {
 			clientes.add(cliente);
 			salvarArquivo();
@@ -34,7 +36,7 @@ public class PersistenciaEmArquivo implements Serializable{
 		}
 	}
 	
-	public void removerCliente(Cliente cliente) {
+	public void removerCliente(Cliente cliente) throws ClienteException {
 		if(clientes.contains(cliente)) {
 			clientes.remove(cliente);
 			salvarArquivo();
@@ -42,13 +44,11 @@ public class PersistenciaEmArquivo implements Serializable{
 			System.out.println("Cliente removido com sucesso!");
 			System.out.println("---------------------------------------------------------------------");
 		}else {
-			System.out.println("\n---------------------------------------------------------------------");
-			System.err.println("Cliente não existente!");
-			System.out.println("---------------------------------------------------------------------");
+			throw new ClienteException("Cliente não existente!");
 		}
 	}
 	
-	public ArrayList<Cliente> getClientes(){
+	public List<Cliente> getClientes(){
 		return clientes;
 	}
 	
@@ -65,15 +65,13 @@ public class PersistenciaEmArquivo implements Serializable{
 		return null;
 	}
 	
-	public void atualizarCliente(Cliente cliente) {
+	public void atualizarCliente(Cliente cliente) throws ClienteException  {
 		if(clientes.contains(cliente)) {
 			int index = clientes.indexOf(cliente);
 			clientes.set(index, cliente);
 			salvarArquivo();
 		}else {
-			System.out.println("\n---------------------------------------------------------------------");
-			System.out.println("Cliente não localizado !");
-			System.out.println("\n---------------------------------------------------------------------");
+			throw new ClienteException("Cliente não existente!");
 		}
 	}
 	
@@ -85,7 +83,7 @@ public class PersistenciaEmArquivo implements Serializable{
 			oos.close();
 			fos.close();
 		}catch (Exception e) {
-			e.getMessage();
+			e.printStackTrace();
 		}
 	}
 	
@@ -93,12 +91,13 @@ public class PersistenciaEmArquivo implements Serializable{
 		try {
 			FileInputStream fis = new FileInputStream("dados.txt");
 			ObjectInputStream ois = new ObjectInputStream(fis);
-			clientes = (ArrayList<Cliente>) ois.readObject();
+			clientes = (List<Cliente>) ois.readObject();
 			ois.close();
 			fis.close();
 		} catch (Exception e) {
 			e.getMessage();
 		}
 	}
+
 	
 }

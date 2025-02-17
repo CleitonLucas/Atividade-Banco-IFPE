@@ -1,8 +1,14 @@
 package bancario.projeto.model;
 
 import java.io.Serializable;
+
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import bancario.projeto.utils.Utilitarios;
+import exception.ContaException;
 
 public class Cliente implements Serializable { /*Serializable - processo de converter um objeto em uma sequência de bytes, 
 												afim de realizar uma transmissão via rede ou salvar em um arquivo de persistência*/
@@ -13,7 +19,7 @@ public class Cliente implements Serializable { /*Serializable - processo de conv
 													 caso for diferente da erro*/
 	private String cpf;
 	private String nome;
-	private ArrayList<ContaBancaria> contas; 
+	private List<IConta> contas; 
 	
 	public Cliente() {
 		
@@ -22,62 +28,8 @@ public class Cliente implements Serializable { /*Serializable - processo de conv
 	public Cliente(String nome, String cpf) {
 		this.cpf = cpf;
 		this.nome = nome;
-		contas = new ArrayList<ContaBancaria>();
-	}
-	
-	public void adicionarConta(ContaBancaria conta) {
-		if(contas.contains(conta)) {
-			System.out.println("\n---------------------------------------------------------------------");
-			System.err.println("Conta já cadastrada!");
-			System.out.println("---------------------------------------------------------------------");
-		}else {
-			contas.add(conta);
-			System.out.println("\n---------------------------------------------------------------------");
-			System.out.println("Conta cadastrada com sucesso!");
-			System.out.println("---------------------------------------------------------------------");
-		}
-	}
-	
-	public void removerConta(ContaBancaria conta) {
-		if(contas.contains(conta)) {
-			contas.remove(conta);
-			System.out.println("\n---------------------------------------------------------------------");
-			System.out.println("Conta removida com sucesso!");
-			System.out.println("---------------------------------------------------------------------");
-		}else {
-			System.out.println("\n---------------------------------------------------------------------");
-			System.err.println("Conta não existente !");
-			System.out.println("---------------------------------------------------------------------");
-		}
-	}
-	
-	public ContaBancaria localizarConta(Integer numero) {
-		ContaBancaria contaTemp = new ContaBancaria();
-		contaTemp.setNumeroConta(numero);
+		contas = new ArrayList<IConta>();
 		
-		if(contas.contains(contaTemp)) {
-			int index = contas.indexOf(contaTemp);
-			contaTemp = contas.get(index);
-			return contaTemp;
-		}
-		
-		return null;
-
-	}
-	
-	public void atualizarConta(ContaBancaria conta) {
-		if(contas.contains(conta)) {
-			int index = contas.indexOf(conta);
-			contas.set(index, conta);
-			
-			System.out.println("\n---------------------------------------------------------------------");
-			System.out.println("Conta atualizada com sucesso!");
-			System.out.println("---------------------------------------------------------------------");
-		}else {
-			System.out.println("\n---------------------------------------------------------------------");
-			System.err.println("Conta não localizada !");
-			System.out.println("---------------------------------------------------------------------");
-		}
 	}
 
 	public String getCpf() {
@@ -96,11 +48,11 @@ public class Cliente implements Serializable { /*Serializable - processo de conv
 		this.nome = nome;
 	}
 
-	public ArrayList<ContaBancaria> getContas() {
+	public List<IConta> getContas() {
 		return contas;
 	}
 
-	public void setContas(ArrayList<ContaBancaria> contas) {
+	public void setContas(List<IConta> contas) {
 		this.contas = contas;
 	}
 
@@ -124,7 +76,7 @@ public class Cliente implements Serializable { /*Serializable - processo de conv
 	@Override
 	public String toString() {
 		return "\nNome: "+nome+" \n"
-				+ "CPF: "+cpf+" \n"
-				+ "Contas: "+contas+ "\n";
+				+ "CPF: "+Utilitarios.formatarCPF(cpf)+" \n"
+				+ "Contas possuidoras: "+contas.size()+ "\n";
 	}	
 }
